@@ -138,12 +138,15 @@ def read_output(path, timeout=5 * 60):
         with open(path, "r") as f:
             while not done:
                 offset = f.tell()
+                print('OFFSET', offset)
                 line = f.readline()
                 if line.endswith("\n"):
                     with lock:
+                        print('LINE_1', line)
                         lines.append(line)
                 else:
                     with lock:
+                        print('LINE_2', line)
                         linebuffer[0] = line
                     f.seek(offset)
                     time.sleep(0.2)
@@ -157,6 +160,8 @@ def read_output(path, timeout=5 * 60):
         if time.time() - last_update_time > timeout:
             with lock:
                 print(linebuffer[0])
+                with open(path, "r") as f:
+                    print(f.readlines())
             done = True
             raise TimeoutError()
 
